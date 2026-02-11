@@ -1,60 +1,203 @@
 <!DOCTYPE html>
-<html lang="ku">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>GCD Calculator</title>
+<title>Ultimate Math Solver</title>
+
 <style>
-body { font-family: sans-serif; text-align: center; }
-input { margin: 5px; padding: 5px; }
-button { padding: 6px 12px; }
-.result { margin-top: 15px; }
+body{
+    font-family: Arial;
+    background:#0f172a;
+    color:white;
+    text-align:center;
+    padding:30px;
+}
+.box{
+    background:#1e293b;
+    padding:20px;
+    margin:20px auto;
+    width:400px;
+    border-radius:10px;
+}
+input{
+    padding:8px;
+    width:80%;
+    margin:5px;
+}
+button{
+    padding:8px 15px;
+    margin-top:10px;
+    cursor:pointer;
+    background:#22c55e;
+    border:none;
+    color:white;
+    border-radius:5px;
+}
+.result{
+    background:black;
+    margin-top:15px;
+    padding:10px;
+    white-space:pre-line;
+    border-radius:5px;
+}
 </style>
 </head>
+
 <body>
 
-<h2>حەلی GCD (هاوبەشترین دابەشکەر)</h2>
+<h1>Ultimate Math Solver</h1>
 
-<input type="number" id="a" placeholder="ژمارەی یەکەم">
-<input type="number" id="b" placeholder="ژمارەی دووەم">
+<!-- Binary → Decimal -->
+<div class="box">
+<h3>Binary → Decimal</h3>
+<input id="binToDec" placeholder="1011">
 <br>
-<button onclick="calculate()">حەساب بکە</button>
+<button onclick="binaryToDecimal()">Convert</button>
+<div id="binDecResult" class="result"></div>
+</div>
 
-<div class="result" id="output"></div>
+<!-- Decimal → Binary -->
+<div class="box">
+<h3>Decimal → Binary</h3>
+<input id="decToBin" placeholder="13">
+<br>
+<button onclick="decimalToBinary()">Convert</button>
+<div id="decBinResult" class="result"></div>
+</div>
+
+<!-- Prime Factorization -->
+<div class="box">
+<h3>Prime Factorization</h3>
+<input id="primeInput" placeholder="24">
+<br>
+<button onclick="primeFactor()">Solve</button>
+<div id="primeResult" class="result"></div>
+</div>
+
+<!-- Derivative -->
+<div class="box">
+<h3>Derivative (Power Rule)</h3>
+<input id="derInput" placeholder="x^3">
+<br>
+<button onclick="derivative()">Solve</button>
+<div id="derResult" class="result"></div>
+</div>
+
+<!-- Integral -->
+<div class="box">
+<h3>Integral (Power Rule)</h3>
+<input id="intInput" placeholder="x^3">
+<br>
+<button onclick="integral()">Solve</button>
+<div id="intResult" class="result"></div>
+</div>
 
 <script>
-function calculate() {
-  let a = Number(document.getElementById("a").value);
-  let b = Number(document.getElementById("b").value);
 
-  if (a <= 0 || b <= 0) {
-    document.getElementById("output").innerHTML = "تکایە ژمارەی دروست بنووسە";
-    return;
-  }
+function binaryToDecimal(){
+    let result = document.getElementById("binDecResult");
+    try{
+        let bin = document.getElementById("binToDec").value;
+        let dec = parseInt(bin,2);
+        if(isNaN(dec)) throw "error";
 
-  let fa = [];
-  let fb = [];
-  let common = [];
-  let gcd = 1;
-
-  for (let i = 1; i <= a; i++)
-    if (a % i === 0) fa.push(i);
-
-  for (let i = 1; i <= b; i++)
-    if (b % i === 0) fb.push(i);
-
-  for (let i = 1; i <= a && i <= b; i++) {
-    if (a % i === 0 && b % i === 0) {
-      common.push(i);
-      gcd = i;
+        result.innerText =
+        "Step 1: Multiply by powers of 2\n" +
+        "Step 2: Convert → " + dec +
+        "\n\nFinal Answer:\n" + dec;
     }
-  }
-
-  document.getElementById("output").innerHTML =
-    "Factors of " + a + ": " + fa.join(", ") + "<br>" +
-    "Factors of " + b + ": " + fb.join(", ") + "<br><br>" +
-    "Common factors: " + common.join(", ") + "<br><br>" +
-    "<b>GCD = " + gcd + "</b>";
+    catch{
+        result.innerText = "Enter valid binary number";
+    }
 }
+
+function decimalToBinary(){
+    let result = document.getElementById("decBinResult");
+    try{
+        let dec = parseInt(document.getElementById("decToBin").value);
+        if(isNaN(dec)) throw "error";
+
+        let bin = dec.toString(2);
+
+        result.innerText =
+        "Step 1: Divide by 2 repeatedly\n" +
+        "Step 2: Read remainders upward\n\n" +
+        "Final Answer:\n" + bin;
+    }
+    catch{
+        result.innerText = "Enter valid decimal number";
+    }
+}
+
+function primeFactor(){
+    let result = document.getElementById("primeResult");
+    try{
+        let n = parseInt(document.getElementById("primeInput").value);
+        if(isNaN(n) || n<=1) throw "error";
+
+        let steps = "Step 1: Divide by smallest primes\n";
+        let factors = [];
+        let divisor = 2;
+
+        while(n > 1){
+            if(n % divisor === 0){
+                factors.push(divisor);
+                steps += n + " ÷ " + divisor + " = " + (n/divisor) + "\n";
+                n = n/divisor;
+            } else {
+                divisor++;
+            }
+        }
+
+        result.innerText = steps + 
+        "\nFinal Answer:\n" + factors.join(" × ");
+    }
+    catch{
+        result.innerText = "Enter number greater than 1";
+    }
+}
+
+function derivative(){
+    let result = document.getElementById("derResult");
+    try{
+        let exp = document.getElementById("derInput").value.trim();
+        if(!exp.startsWith("x^")) throw "error";
+
+        let power = parseFloat(exp.replace("x^",""));
+        if(isNaN(power)) throw "error";
+
+        let newPower = power - 1;
+
+        result.innerText =
+        "Step 1: d/dx x^n = n*x^(n-1)\n" +
+        "n = " + power +
+        "\n\nFinal Answer:\n" + power + "x^" + newPower;
+    }
+    catch{
+        result.innerText = "Use format: x^3";
+    }
+}
+
+function integral(){let result = document.getElementById("intResult");
+    try{
+        let exp = document.getElementById("intInput").value.trim();
+        if(!exp.startsWith("x^")) throw "error";
+
+        let power = parseFloat(exp.replace("x^",""));
+        if(isNaN(power)) throw "error";
+
+        let newPower = power + 1;
+
+        result.innerText =
+        "Step 1: ∫ x^n dx = x^(n+1)/(n+1)\n" +
+        "n = " + power +
+        "\n\nFinal Answer:\n x^" + newPower + "/" + newPower + " + C";
+    }
+    catch{
+        result.innerText = "Use format: x^3";
+    }
+}
+
 </script>
 
 </body>
